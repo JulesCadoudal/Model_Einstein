@@ -11,11 +11,10 @@ import random
 """
 (pour le model d'Enstein voir page wikipédia)
 La simulation est faite en calculant pour chaque valeur de KbT/hw l'energie moyenne (de chaque particules) en utilisant la valeur de la fonction de partition d'un ressort (voir model d'Einstein)
-On calcul l'energie qu'aurais un atome pour chaque niveau d'energie, on fait le rapport avec l'énergie moyenne, on stoque ca dans une liste et on réitère 12 fois. 
+On calcul la probabilité de chaques micro état (définie par le mode de l'atome) en utilisant l'energie moyenne (voir physique statistique approche micro canonique), on stocke ca dans une liste et on réitère 12 fois. 
 On obtient alors une liste avec le pourcentage de chance de chaque niveau d'energie selon la température
 Ensuite on se ballade dans un array 2D de 60 par 60 et à chaques indice on lance la sousfonction qui nous donne le niveau d'énergie de l'atome selon la température.
 Cette sous fonction marche en allant chercher le pourcentage de chance de chaque niveau dans la liste. On teste du plus haut niveau d'énergie au plus bas (car la statistiqe est décroissant avec l'augmentation du niveau)
-----(cette méthode à ses limite, en effet si la température dépasse un certain niveau on a un poucentage de chance d'avoir un niveau d'énergie supérieur à 100%, je n'est pas encore réglé ce problem.)----
 Pour animé la simulation on crée une image de l'array 2D et on la sauvegarde pour chaques valeurs de KbT/hw, ensuite on crée un gif avec les images
 On stocke aussi les valeurs de chaques niveau d'énergie pour KbT/hw et on crée un diagramme à barre. 
 """
@@ -37,7 +36,7 @@ for i in range(200):
     def partition(constante): #La fonction rend la valeur de la fonction de partition selon la valeur de constante
         return(1/(2*np.sinh(0.5*(1/constante))))
     for i in range(13):
-        percent.append(((np.exp((-1/constante)*(0.5+i)))/(partition(constante))))  #ici on fait le rapport entre la valeurs moyenne de l'energie selon la température et la valeurs de l'énergie pour cahchaques niveau de l'atome et on stocke ca dans une liste
+        percent.append(((np.exp((-1/constante)*(0.5+i)))/(partition(constante))))  #ici on calcule la probabilité de chaque micro état selon la température et on stocke ca dans une liste
     def reset(percent): #Fonction qui teste TRUE selon une probabilité qui lui est communiqué 
         if random.uniform(0,1) <percent:
             return True
@@ -48,7 +47,7 @@ for i in range(200):
         n=13
         for i in range(12,-1,-1):
             n-=1
-            if percent[i]>=1: #si le taux de probabilité est supérieur a 1 --- le problème est ici ---
+            if percent[i]>=1:
                 break
             if reset(percent[i])==True:
                 break
